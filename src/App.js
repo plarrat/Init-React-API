@@ -6,29 +6,20 @@ import { Container, Row, Col, InputGroup, FormControl, Button, Image } from "rea
 export default function App() {
 
   const [nbPic, setNbPic] = useState(1)
-  const [pics, setPics] = useState([])
+  const [produit, setProduit] = useState({})
 
   function getDatas(){
-    let url = `https://picsum.photos/v2/list?limit=${nbPic}`
+    let url = `https://world.openfoodfacts.org/api/v0/product/3229820791074.json`
 
     fetch(url).then(function(res){
       return res.json()
     }).then(function(datas){
-      setPics(datas)
+      setProduit(datas)
     })
     
   }
 
-  function displayPics(){
-    return pics.map(pic=>{
-    
-      return (
-        <Col xs={6} md={4} className="m-3">
-            <Image src={pic.download_url} width="200 " rounded />
-        </Col>
-      )
-    })
-  }
+
   return (
     <div className="App">
       <NavbarApp />
@@ -43,9 +34,9 @@ export default function App() {
               <FormControl
                 placeholder="Saisir un nombre de photos"
                 value={nbPic}
-                onChange={(e)=>{setNbPic(e.target.value)}}
+                onChange={e=>setNbPic(e.target.value)}
               />
-                <InputGroup.Text>Nombre de Photos ({pics.length})</InputGroup.Text>
+                <InputGroup.Text>Nombre de Photos {produit.length}</InputGroup.Text>
               </InputGroup>
 
               <Button variant="info" onClick={getDatas}>Cliquez moi</Button>
@@ -55,7 +46,13 @@ export default function App() {
 
       <Container>
         <Row>
-          {displayPics()}
+          {(produit.product != null) &&
+            <Col xs={6} md={4} className="m-3">
+              <h3>{produit.product.brands}</h3>
+              <h3>{produit.product.prodcut_name_fr}</h3>
+              <Image src={produit.product.image_small_url} width="200 " rounded />
+            </Col>
+          }
         </Row>
       </Container>
     </div>
