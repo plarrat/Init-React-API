@@ -1,6 +1,8 @@
 import "./App.css"
 import { useState } from "react"
 import NavbarApp from "./components/NavbarApp"
+import axios from "axios"
+
 import {
   Container,
   Row,
@@ -14,6 +16,7 @@ import {
 export default function App() {
   const [nbPic, setNbPic] = useState(1)
   const [produit, setProduit] = useState({})
+  const [formAjout, setFormAjout] = useState({})
 
   function getDatas() {
     let url = `http://localhost:3010/user/${nbPic}`
@@ -26,6 +29,19 @@ export default function App() {
         alert()
         // setProduit(datas)
       })
+  }
+
+  function addUser(event) {
+    event.preventDefault()
+    const { nom, prenom, age } = { ...formAjout }
+
+    let url = `http://localhost:3010/user`
+
+    axios.post(url, {
+      nom,
+      prenom,
+      age,
+    })
   }
 
   return (
@@ -61,23 +77,56 @@ export default function App() {
           <Col md="6">
             <h1>Formulaire ajout utilisateur</h1>
             <hr />
-            <Form>
+
+            <Form onSubmit={(e) => addUser(e)}>
               <Form.Group className="mb-3">
                 <Form.Label>Nom</Form.Label>
-                <Form.Control type="nom" placeholder="Larrat" />
+                <Form.Control
+                  value={formAjout.nom}
+                  type="nom"
+                  placeholder="Larrat"
+                  required
+                  onChange={(e) => {
+                    let tmp = { ...formAjout }
+                    tmp.nom = e.target.value
+                    setFormAjout(tmp)
+                  }}
+                />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Prenom</Form.Label>
-                <Form.Control type="prenom" placeholder="Philippe" />
+                <Form.Control
+                  value={formAjout.prenom}
+                  type="prenom"
+                  placeholder="Philippe"
+                  required
+                  onChange={(e) => {
+                    let tmp = { ...formAjout }
+                    tmp.prenom = e.target.value
+                    setFormAjout(tmp)
+                  }}
+                />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Age</Form.Label>
-                <Form.Control type="age" placeholder="ex : 20" />
+                <Form.Control
+                  value={formAjout.age}
+                  type="number"
+                  placeholder="ex : 20"
+                  required
+                  onChange={(e) => {
+                    let tmp = { ...formAjout }
+                    tmp.age = e.target.value
+                    setFormAjout(tmp)
+                  }}
+                />
               </Form.Group>
 
-              <Button variant="info">Enregistrer</Button>
+              <Button variant="info" type="submit">
+                Enregistrer
+              </Button>
             </Form>
           </Col>
         </Row>
